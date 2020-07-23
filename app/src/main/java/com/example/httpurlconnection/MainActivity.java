@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                     population = firstObj.getString("population");
                     countryFlag = firstObj.getString("flag");
 
-                    Log.d("MYCOUNTRY", countryName);
+                    Log.d("MYFLAG", countryFlag);
 
                     Country myCountry = new Country();
                     myCountry.setCountryName(countryName);
