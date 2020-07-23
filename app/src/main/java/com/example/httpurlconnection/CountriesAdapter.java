@@ -1,19 +1,18 @@
 package com.example.httpurlconnection;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CountriesAdapter extends RecyclerView.Adapter<CountriesAdapter.MyViewHolder> {
 
@@ -47,8 +46,8 @@ public class CountriesAdapter extends RecyclerView.Adapter<CountriesAdapter.MyVi
         holder.alphaCodeTv.setText(countryArrayList.get(position).getAlpha2Code());
         holder.regionTv.setText(countryArrayList.get(position).getRegion());
         holder.populationTv.setText(countryArrayList.get(position).getPopulation());
-        Glide.with(context).asBitmap().load(countryArrayList.get(position).getCountryFlagUrl())
-                .into(holder.circleImageView);
+        holder.circleImageView.setImageURI(Uri.parse(countryArrayList.get(position).getCountryFlagUrl()));
+        MyUtils.fetchSvg(context, countryArrayList.get(position).getCountryFlagUrl(), holder.circleImageView);
 
     }
 
@@ -59,7 +58,7 @@ public class CountriesAdapter extends RecyclerView.Adapter<CountriesAdapter.MyVi
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        CircleImageView circleImageView;
+        ImageView circleImageView;
         TextView countryNameTv;
         TextView countryCapitalTv;
         TextView callingCodeTv;
@@ -79,4 +78,5 @@ public class CountriesAdapter extends RecyclerView.Adapter<CountriesAdapter.MyVi
             alphaCodeTv = itemView.findViewById(R.id.alpha_code);
         }
     }
+
 }
