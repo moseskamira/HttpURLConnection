@@ -69,6 +69,7 @@
         app:layout_constraintStart_toStartOf="@+id/country_name"
         app:layout_constraintTop_toBottomOf="@+id/calling_code" />
 
+
     <TextView
         android:id="@+id/country_region"
         android:layout_width="wrap_content"
