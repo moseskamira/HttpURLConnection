@@ -96,5 +96,4 @@
         app:layout_constraintStart_toStartOf="@+id/country_name"
         app:layout_constraintTop_toBottomOf="@+id/country_region" />
 
-
 </androidx.constraintlayout.widget.ConstraintLayout>
