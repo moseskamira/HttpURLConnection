@@ -1,4 +1,4 @@
-package com.example.httpurlconnection;
+package com.example.httpurlconnection.models;
 
 import androidx.annotation.NonNull;
 

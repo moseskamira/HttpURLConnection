@@ -1,4 +1,4 @@
-package com.example.httpurlconnection;
+package com.example.httpurlconnection.adapters;
 
 import android.content.Context;
 import android.net.Uri;
@@ -10,6 +10,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.httpurlconnection.utils.MyUtils;
+import com.example.httpurlconnection.R;
+import com.example.httpurlconnection.models.Country;
 
 import java.util.ArrayList;
 

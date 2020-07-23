@@ -1,4 +1,4 @@
-package com.example.httpurlconnection;
+package com.example.httpurlconnection.services;
 
 public interface MyAppURLs {
 

@@ -1,4 +1,4 @@
-package com.example.httpurlconnection;
+package com.example.httpurlconnection.utils;
 
 import android.content.Context;
 import android.widget.ImageView;
@@ -21,7 +21,6 @@ public class MyUtils {
 
     public static void fetchSvg(Context context, String url, final ImageView target) {
         if (httpClient == null) {
-            // Use cache for performance and basic offline capability
             httpClient = new OkHttpClient.Builder()
                     .cache(new Cache(context.getCacheDir(), 5 * 1024 * 1014))
                     .build();
