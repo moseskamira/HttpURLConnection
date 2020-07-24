@@ -61,7 +61,6 @@ public class PostDetailActivity extends AppCompatActivity {
         try {
             myData.put("name", userName);
             myData.put("job", "Leader");
-
             postData = myData.toString().getBytes(StandardCharsets.UTF_8);
             new PostUserData(this).execute();
 
