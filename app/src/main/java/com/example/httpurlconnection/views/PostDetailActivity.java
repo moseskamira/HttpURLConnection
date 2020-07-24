@@ -19,7 +19,9 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -34,6 +36,7 @@ public class PostDetailActivity extends AppCompatActivity {
     HttpURLConnection httpURLConnection;
     ProgressDialog progressDialog;
     byte[] postData;
+    BufferedReader bufferedReader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,57 +63,75 @@ public class PostDetailActivity extends AppCompatActivity {
             myData.put("job", "Leader");
 
             postData = myData.toString().getBytes(StandardCharsets.UTF_8);
-            new PostUserData().execute();
+            new PostUserData(this).execute();
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private class PostUserData extends AsyncTask<String, String, String> {
+    private static class PostUserData extends AsyncTask<String, String, String> {
+        WeakReference<PostDetailActivity> weakReference;
+
+        PostUserData(PostDetailActivity context) {
+            weakReference = new WeakReference<>(context);
+        }
+
         String userData = "";
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog.setMessage("Saving User...");
-            progressDialog.show();
+
+            PostDetailActivity postDetailActivity = weakReference.get();
+            postDetailActivity.progressDialog.setMessage("Saving User...");
+            postDetailActivity.progressDialog.show();
         }
 
         @Override
         protected String doInBackground(String... strings) {
+            PostDetailActivity postDetailActivity = weakReference.get();
 
             try {
-                myUrl = new URL(stringUrl);
+                postDetailActivity.myUrl = new URL(postDetailActivity.stringUrl);
+                postDetailActivity.httpURLConnection = (HttpURLConnection) postDetailActivity.myUrl
+                        .openConnection();
+                postDetailActivity.httpURLConnection.setDoOutput(true);
+                postDetailActivity.httpURLConnection.setRequestMethod("POST");
+                postDetailActivity.httpURLConnection.setRequestProperty(
+                        "Accept", "application/json");
+                postDetailActivity.httpURLConnection.setRequestProperty(
+                        "Content-Type", "application/json; utf-8");
+                DataOutputStream dataOutputStream = new DataOutputStream(postDetailActivity
+                        .httpURLConnection.getOutputStream());
+                dataOutputStream.write(postDetailActivity.postData);
+                postDetailActivity.httpURLConnection.connect();
 
-                httpURLConnection = (HttpURLConnection) myUrl.openConnection();
-                httpURLConnection.setDoOutput(true);
-                httpURLConnection.setRequestMethod("POST");
-                httpURLConnection.setRequestProperty("Accept", "application/json");
-                httpURLConnection.setRequestProperty("Content-Type", "application/json; utf-8");
-                DataOutputStream dataOutputStream = new DataOutputStream(httpURLConnection
-                        .getOutputStream());
-                dataOutputStream.write(postData);
-                httpURLConnection.connect();
+                int responseCode = postDetailActivity.httpURLConnection.getResponseCode();
+                if (responseCode == 201) {
+                    postDetailActivity.bufferedReader = new BufferedReader(new
+                            InputStreamReader(postDetailActivity.httpURLConnection.getInputStream()));
+                    String line = "";
+                    while ((line = postDetailActivity.bufferedReader.readLine()) != null) {
+                        userData += line;
+                    }
+                } else {
+                    Log.d("RESPMES", postDetailActivity.httpURLConnection.getResponseMessage());
 
-
-                int responseCode = httpURLConnection.getResponseCode();
-               if (responseCode == 201) {
-                   BufferedReader bufferedReader = new BufferedReader(new
-                           InputStreamReader(httpURLConnection.getInputStream()));
-                   String line = "";
-                   while ((line = bufferedReader.readLine()) != null) {
-                       userData += line;
-                   }
-               }else {
-                   Log.d("RESPMES", httpURLConnection.getResponseMessage());
-
-               }
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                if (httpURLConnection != null) {
-                    httpURLConnection.disconnect();
+                if (postDetailActivity.bufferedReader != null) {
+                    try {
+                        postDetailActivity.bufferedReader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if (postDetailActivity.httpURLConnection != null) {
+                    postDetailActivity.httpURLConnection.disconnect();
                 }
             }
             return userData;
@@ -120,17 +141,20 @@ public class PostDetailActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            progressDialog.dismiss();
+            PostDetailActivity postDetailActivity = weakReference.get();
+            postDetailActivity.progressDialog.dismiss();
             Log.d("USERDETAILS", s);
             try {
                 JSONObject catObj = new JSONObject(s);
                 if (catObj.has("createdAt")) {
 
                     if (!catObj.getString("createdAt").isEmpty()) {
-                        Toast.makeText(PostDetailActivity.this, getString(R.string.toast1),
+                        Toast.makeText(postDetailActivity, postDetailActivity.getString(
+                                R.string.toast1 )+ " "+
+                                        catObj.getString("id"),
                                 Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(PostDetailActivity.this, "Empty Field",
+                        Toast.makeText(postDetailActivity, "Empty Field",
                                 Toast.LENGTH_LONG).show();
                     }
                 }
