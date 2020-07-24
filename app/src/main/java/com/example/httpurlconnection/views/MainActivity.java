@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             MainActivity mainActivity = weakReference.get();
-            mainActivity.progressDialog.setMessage("Please Wait....");
+            mainActivity.progressDialog.setMessage("Fetching Countries....");
             mainActivity.progressDialog.show();
         }
 
@@ -74,8 +74,10 @@ public class MainActivity extends AppCompatActivity {
             try {
                 URL myUrl = new URL(MyAppURLs.fetchAllCountries);
                 mainActivity.connection = (HttpURLConnection) myUrl.openConnection();
-                int code = connection.getResponseCode();
-                if (code == 200) {
+                mainActivity.connection.connect();
+
+                int responseCode = mainActivity.connection.getResponseCode();
+                if (responseCode == 200) {
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
                             mainActivity.connection.getInputStream()));
                     String line;

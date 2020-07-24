@@ -3,10 +3,13 @@ package com.example.httpurlconnection.utils;
 import android.content.Context;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+
 import com.pixplicity.sharp.Sharp;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
 import okhttp3.Cache;
 import okhttp3.Call;
@@ -29,13 +32,13 @@ public class MyUtils {
         Request request = new Request.Builder().url(url).build();
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
-//                target.setImageDrawable(R.drawable.ic_launcher_foreground);
+            public void onFailure(@NonNull Call call, IOException e) {
+//                target.setImageDrawable(R.drawable.ic_image_black_24dp);
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                InputStream stream = response.body().byteStream();
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                InputStream stream = Objects.requireNonNull(response.body()).byteStream();
                 Sharp.loadInputStream(stream).into(target);
                 stream.close();
             }
