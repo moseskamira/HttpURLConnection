@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">HttpURLConnection</string>
+    <string name="toast1">Successfully Saved</string>
 </resources>
