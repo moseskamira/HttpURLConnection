@@ -5,9 +5,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import com.example.httpurlconnection.R;
 import com.example.httpurlconnection.adapters.CountriesAdapter;
@@ -31,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     HttpURLConnection connection;
     String countryName, countryCapital, alphaCode, callingCode, region, population, countryFlag;
 
+    TextView postLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +42,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         recyclerView = findViewById(R.id.countries_recycler_view);
         countryArrayList = new ArrayList<>();
-
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
+        postLink = findViewById(R.id.post_link);
+        if (postLink != null) {
+            postLink.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    launchPostDetailsActivity();
+                }
+            });
+        }
+
+
         fetchAllCountries();
+    }
+
+    private void launchPostDetailsActivity() {
+        startActivity(new Intent(MainActivity.this, PostDetailActivity.class));
     }
 
     private void fetchAllCountries() {
@@ -103,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(s);
             MainActivity mainActivity = weakReference.get();
             mainActivity.progressDialog.dismiss();
-            Log.d("VERIFYME", s);
+            Log.d("COUNTRIES", s);
 
             try {
 
@@ -132,7 +150,6 @@ public class MainActivity extends AppCompatActivity {
                     myCountry.setCountryFlagUrl(mainActivity.countryFlag);
 
                     mainActivity.countryArrayList.add(myCountry);
-
                     initializeRecyclerView(mainActivity.countryArrayList);
                 }
 
