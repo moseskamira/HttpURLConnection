@@ -29,8 +29,9 @@ public class PostDetailActivity extends AppCompatActivity {
     EditText userNameEt;
     Button submitBtn;
     String userName;
+    String stringUrl;
+    URL myUrl;
     HttpURLConnection httpURLConnection;
-    String appUrl;
     ProgressDialog progressDialog;
     byte[] postData;
 
@@ -52,7 +53,7 @@ public class PostDetailActivity extends AppCompatActivity {
 
     private void formulateAlbumPostData() {
         userName = userNameEt.getText().toString();
-        appUrl = MyAppURLs.saveUser;
+        stringUrl = MyAppURLs.saveUser;
         JSONObject myData = new JSONObject();
         try {
             myData.put("name", userName);
@@ -80,7 +81,7 @@ public class PostDetailActivity extends AppCompatActivity {
         protected String doInBackground(String... strings) {
 
             try {
-                URL myUrl = new URL(appUrl);
+                myUrl = new URL(stringUrl);
 
                 httpURLConnection = (HttpURLConnection) myUrl.openConnection();
                 httpURLConnection.setDoOutput(true);
