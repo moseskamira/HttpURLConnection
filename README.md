@@ -5,4 +5,4 @@
 - Manipulating SVG Image type for display in ImageView.
 - An API returning a list of all countries in the world has been consumed with details displayed as in screenshot below
 ### Screenshot
-![List of countries](/images/Flag.png)
+![List of countries](/images/Flag2.png)
