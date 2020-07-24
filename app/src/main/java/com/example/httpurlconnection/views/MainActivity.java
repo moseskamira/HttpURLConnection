@@ -21,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     String stringUrl;
     URL myUrl;
     HttpURLConnection connection;
+    BufferedReader bufferedReader;
     String countryName, countryCapital, alphaCode, callingCode, region, population, countryFlag;
 
     TextView postLink;
@@ -70,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private class GetAllCountries extends AsyncTask<String, String, String> {
+    private static class GetAllCountries extends AsyncTask<String, String, String> {
         String allCountriesData = "";
         WeakReference<MainActivity> weakReference;
 
@@ -91,25 +93,34 @@ public class MainActivity extends AppCompatActivity {
             MainActivity mainActivity = weakReference.get();
 
             try {
-                stringUrl = MyAppURLs.fetchAllCountries;
-                myUrl = new URL(stringUrl);
-                mainActivity.connection = (HttpURLConnection) myUrl.openConnection();
+                mainActivity.stringUrl = MyAppURLs.fetchAllCountries;
+                mainActivity.myUrl = new URL(mainActivity.stringUrl);
+                mainActivity.connection = (HttpURLConnection) mainActivity.myUrl.openConnection();
                 mainActivity.connection.connect();
 
                 int responseCode = mainActivity.connection.getResponseCode();
                 if (responseCode == 200) {
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
+                    mainActivity.bufferedReader = new BufferedReader(new InputStreamReader(
                             mainActivity.connection.getInputStream()));
                     String line = "";
-                    while ((line = bufferedReader.readLine()) != null) {
+                    while ((line = mainActivity.bufferedReader.readLine()) != null) {
                         allCountriesData += line;
                     }
-                }else {
+                } else {
                     Log.d("RESPONSE", mainActivity.connection.getResponseMessage());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
+                try {
+                    if (mainActivity.bufferedReader != null) {
+                        mainActivity.bufferedReader.close();
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 if (mainActivity.connection != null) {
                     mainActivity.connection.disconnect();
                 }
@@ -153,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                     myCountry.setCountryFlagUrl(mainActivity.countryFlag);
 
                     mainActivity.countryArrayList.add(myCountry);
-                    initializeRecyclerView(mainActivity.countryArrayList);
+                    mainActivity.initializeRecyclerView(mainActivity.countryArrayList);
                 }
 
             } catch (Exception e) {
@@ -166,7 +177,6 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new CountriesAdapter(this, myList));
-
     }
 
 }
