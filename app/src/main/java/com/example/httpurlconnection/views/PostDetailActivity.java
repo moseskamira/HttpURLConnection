@@ -76,7 +76,6 @@ public class PostDetailActivity extends AppCompatActivity {
             progressDialog.show();
         }
 
-
         @Override
         protected String doInBackground(String... strings) {
 
