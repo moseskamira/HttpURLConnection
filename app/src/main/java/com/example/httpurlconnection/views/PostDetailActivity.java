@@ -88,15 +88,16 @@ public class PostDetailActivity extends AppCompatActivity {
                 httpURLConnection.setRequestMethod("POST");
                 httpURLConnection.setRequestProperty("Accept", "application/json");
                 httpURLConnection.setRequestProperty("Content-Type", "application/json; utf-8");
-                DataOutputStream dataOutputStream = new DataOutputStream(httpURLConnection.getOutputStream());
+                DataOutputStream dataOutputStream = new DataOutputStream(httpURLConnection
+                        .getOutputStream());
                 dataOutputStream.write(postData);
                 httpURLConnection.connect();
 
 
                 int responseCode = httpURLConnection.getResponseCode();
                if (responseCode == 201) {
-                   BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection
-                           .getInputStream()));
+                   BufferedReader bufferedReader = new BufferedReader(new
+                           InputStreamReader(httpURLConnection.getInputStream()));
                    String line = "";
                    while ((line = bufferedReader.readLine()) != null) {
                        userData += line;
@@ -129,7 +130,7 @@ public class PostDetailActivity extends AppCompatActivity {
                         Toast.makeText(PostDetailActivity.this, getString(R.string.toast1),
                                 Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(PostDetailActivity.this, "Empty Field Not Allowed",
+                        Toast.makeText(PostDetailActivity.this, "Empty Field",
                                 Toast.LENGTH_LONG).show();
                     }
                 }
