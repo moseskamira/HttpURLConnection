@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     ArrayList<Country> countryArrayList;
     ProgressDialog progressDialog;
+    String stringUrl;
+    URL myUrl;
     HttpURLConnection connection;
     String countryName, countryCapital, alphaCode, callingCode, region, population, countryFlag;
 
@@ -90,7 +92,8 @@ public class MainActivity extends AppCompatActivity {
             MainActivity mainActivity = weakReference.get();
 
             try {
-                URL myUrl = new URL(MyAppURLs.fetchAllCountries);
+                stringUrl = MyAppURLs.fetchAllCountries;
+                myUrl = new URL(stringUrl);
                 mainActivity.connection = (HttpURLConnection) myUrl.openConnection();
                 mainActivity.connection.connect();
 
@@ -102,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
                     while ((line = bufferedReader.readLine()) != null) {
                         allCountriesData += line;
                     }
-
                 }else {
                     Log.d("RESPONSE", mainActivity.connection.getResponseMessage());
                 }
