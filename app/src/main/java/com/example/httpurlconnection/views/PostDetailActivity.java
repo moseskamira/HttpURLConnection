@@ -67,7 +67,7 @@ public class PostDetailActivity extends AppCompatActivity {
     }
 
     private class PostUserData extends AsyncTask<String, String, String> {
-        String userData;
+        String userData = "";
 
         @Override
         protected void onPreExecute() {
@@ -75,7 +75,6 @@ public class PostDetailActivity extends AppCompatActivity {
             progressDialog.setMessage("Saving User...");
             progressDialog.show();
         }
-
 
         @Override
         protected String doInBackground(String... strings) {
@@ -88,19 +87,29 @@ public class PostDetailActivity extends AppCompatActivity {
                 httpURLConnection.setRequestMethod("POST");
                 httpURLConnection.setRequestProperty("Accept", "application/json");
                 httpURLConnection.setRequestProperty("Content-Type", "application/json; utf-8");
-                DataOutputStream wr = new DataOutputStream(httpURLConnection.getOutputStream());
-                wr.write(postData);
-                String outputdata = "";
-                BufferedReader in = new BufferedReader(new InputStreamReader(httpURLConnection
-                        .getInputStream()));
-                String line = "";
-                while ((line = in.readLine()) != null) {
-                    outputdata += line;
-                }
-                userData = outputdata;
-                httpURLConnection.disconnect();
+                DataOutputStream dataOutputStream = new DataOutputStream(httpURLConnection.getOutputStream());
+                dataOutputStream.write(postData);
+                httpURLConnection.connect();
+
+
+                int responseCode = httpURLConnection.getResponseCode();
+               if (responseCode == 201) {
+                   BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection
+                           .getInputStream()));
+                   String line = "";
+                   while ((line = bufferedReader.readLine()) != null) {
+                       userData += line;
+                   }
+               }else {
+                   Log.d("RESPMES", httpURLConnection.getResponseMessage());
+
+               }
             } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                if (httpURLConnection != null) {
+                    httpURLConnection.disconnect();
+                }
             }
             return userData;
         }
@@ -118,7 +127,7 @@ public class PostDetailActivity extends AppCompatActivity {
                     if (!catObj.getString("createdAt").isEmpty()) {
                         Toast.makeText(PostDetailActivity.this, getString(R.string.toast1),
                                 Toast.LENGTH_LONG).show();
-                    }else {
+                    } else {
                         Toast.makeText(PostDetailActivity.this, "Empty Field Not Allowed",
                                 Toast.LENGTH_LONG).show();
                     }
