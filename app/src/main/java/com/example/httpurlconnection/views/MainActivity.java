@@ -98,11 +98,13 @@ public class MainActivity extends AppCompatActivity {
                 if (responseCode == 200) {
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
                             mainActivity.connection.getInputStream()));
-                    String line;
+                    String line = "";
                     while ((line = bufferedReader.readLine()) != null) {
                         allCountriesData += line;
                     }
 
+                }else {
+                    Log.d("RESPONSE", mainActivity.connection.getResponseMessage());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
